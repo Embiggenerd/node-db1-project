@@ -73,6 +73,18 @@ server.put('/accounts/:id', validateID, async (req, res, next) => {
     }
 })
 
+server.delete('/accounts/:id', validateID, async (req, res, next) => {
+    try {
+        await db('accounts')
+            .where({id:req.accountID})
+            .del()
+
+        res.json(req.accountID)
+    } catch (e) {
+        next(e)
+    }
+})
+
 server.use((err, req, res, next) => {
     console.log(err)
     res.status(err.httpStatusCode || 500).json({
