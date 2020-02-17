@@ -8,8 +8,13 @@ server.use(express.json());
 
 server.get('/accounts', async (req, res, next) => {
     try {
+        const { limit, orderBy } = req.query
+
         const accounts = await db.select('*')
             .from('accounts')
+            .limit(limit || 1000)
+            .orderBy(orderBy || 'id')
+
 
         res.json(accounts)
     } catch (e) {
@@ -76,7 +81,7 @@ server.put('/accounts/:id', validateID, async (req, res, next) => {
 server.delete('/accounts/:id', validateID, async (req, res, next) => {
     try {
         await db('accounts')
-            .where({id:req.accountID})
+            .where({ id: req.accountID })
             .del()
 
         res.json(req.accountID)
@@ -84,6 +89,15 @@ server.delete('/accounts/:id', validateID, async (req, res, next) => {
         next(e)
     }
 })
+
+// server.get('/accounts/', async (req, res, next) => {
+//     try {
+//         const customers = await db.select('*').from('customers')
+//         res.json(customers)
+//     }catch(e){
+//         next(e)
+//     }
+// })
 
 server.use((err, req, res, next) => {
     console.log(err)
